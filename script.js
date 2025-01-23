@@ -29,7 +29,6 @@ function Gameboard() {
 		} else {
 			return false
 		}
-
 	}
 
 	return {
@@ -82,13 +81,48 @@ const GameController = (function (player1, player2) {
 
 	// play round and switch active player if move was available
 	const playRound = (row, column) => {
-		if (board.addMarker(row, column, activePlayer.marker)) {
-			switchActivePlayer()
+		const move = board.addMarker(row, column, activePlayer.marker)
+		if (!move) {
+			return
+		}
+		const boardArray = board.getBoard()
+
+		// test every row if one is one marker
+		boardArray.map((row) => {
+			if (row.every(cell => cell.getValue() !== "" && cell.getValue() === row[ 0 ].getValue())) {
+				playerWon()
+			}
+		})
+
+		// loop over each column to test if player has won
+		for (let col = 0; col < boardArray[ 0 ].length;col++) {
+			const column1 = boardArray[ 0 ][ col ].getValue()
+			const column2 = boardArray[ 1 ][ col ].getValue()
+			const column3 = boardArray[ 2 ][ col ].getValue()
+			
+			if (column1 === column2 && column1 === column3 ) {
+				if (column1 === "" || column2 === "" || column3 === "") break
+				playerWon()
+			}
 		}
 
-
-
+		// test if diagonals are same
+		if (boardArray[0][0].getValue() === boardArray[1][1].getValue() && boardArray[0][0].getValue() === boardArray[2][2].getValue() && boardArray[1][1].getValue() !== "") {
+			console.log("diagonal down");
+			
+			playerWon()
+		}
+		if (boardArray[0][2].getValue() === boardArray[1][1].getValue() && boardArray[0][2].getValue() === boardArray[0][2].getValue() && boardArray[1][1].getValue() !== "") {
+			console.log("diagonal up");
+			playerWon()
+		}
+		switchActivePlayer()
 		board.outputBoard()
+	}
+
+	const playerWon = () => {
+		console.log("player won");
+		
 	}
 	return {
 		getActivePlayer,
