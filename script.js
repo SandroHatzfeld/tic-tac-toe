@@ -75,6 +75,7 @@ const GameController = (function (player1, player2) {
 	// swap players
 	const switchActivePlayer = () => {
 		activePlayer = activePlayer === players[ 0 ] ? players[ 1 ] : players[ 0 ]
+		turnInfo(activePlayer)
 	}
 
 	const getActivePlayer = () => activePlayer
@@ -90,7 +91,7 @@ const GameController = (function (player1, player2) {
 		// test every row if one is one marker
 		boardArray.map((row) => {
 			if (row.every(cell => cell.getValue() !== "" && cell.getValue() === row[ 0 ].getValue())) {
-				playerWon()
+				playerWon(activePlayer)
 			}
 		})
 
@@ -102,31 +103,50 @@ const GameController = (function (player1, player2) {
 			
 			if (column1 === column2 && column1 === column3 ) {
 				if (column1 === "" || column2 === "" || column3 === "") break
-				playerWon()
+				playerWon(activePlayer)
 			}
 		}
 
 		// test if diagonals are same
 		if (boardArray[0][0].getValue() === boardArray[1][1].getValue() && boardArray[0][0].getValue() === boardArray[2][2].getValue() && boardArray[1][1].getValue() !== "") {
-			console.log("diagonal down");
-			
-			playerWon()
+			playerWon(activePlayer)
 		}
 		if (boardArray[0][2].getValue() === boardArray[1][1].getValue() && boardArray[0][2].getValue() === boardArray[0][2].getValue() && boardArray[1][1].getValue() !== "") {
-			console.log("diagonal up");
-			playerWon()
+			playerWon(activePlayer)
 		}
-		switchActivePlayer()
-		board.outputBoard()
-	}
 
-	const playerWon = () => {
-		console.log("player won");
-		
+		switchActivePlayer()
+		renderBoard(board)
 	}
+		
+	renderBoard(board)
+	turnInfo(activePlayer)
+	
 	return {
 		getActivePlayer,
 		playRound
 	}
 })("Player 1", "Player 2")
+
+function renderBoard(board) {
+	const gameTarget = document.querySelector("#game")
+	
+	board.getBoard().map((row) => {
+		row.map((cell) => {
+			const cellVisual = document.createElement("div")
+			cellVisual.classList.add("cell")
+			cellVisual.innerHTML = cell.getValue()
+			gameTarget.appendChild(cellVisual)
+		})
+	})
+}
+function turnInfo(player) {
+	document.querySelector("#turninfo").innerHTML = `It's ${player.name} ( ${player.marker} ) turn`
+}
+
+function playerWon(player) {
+	document.querySelector("#turninfo").innerHTML = `${player.name} won the game`
+}
+
+GameController
 
