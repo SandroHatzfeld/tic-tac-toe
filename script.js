@@ -119,7 +119,12 @@ const GameController = (function (player1, player2) {
 			roundOver = true
 			return
 		}
-		
+		// REDO - NOT WORKING
+		if(!boardArray.map((row) => row.includes(""))) {
+			roundOver = true
+			drawInfo()
+			return
+		}
 
 		switchActivePlayer()
 	}
@@ -164,6 +169,7 @@ function setMarker(event) {
 	if (GameController.getGameStatus()) return
 	GameController.playRound(event.currentTarget.dataset.row, event.currentTarget.dataset.column)
 	GameController.renderBoard()
+
 	if (GameController.getGameStatus()) {
 		playerWon(GameController.getActivePlayer())
 	} else {
@@ -180,7 +186,6 @@ function turnInfo(player) {
 function drawInfo() {
 	document.querySelector("#turninfo").innerHTML = `It's a tie!`
 }
-
 function playerWon(player) {
 	document.querySelector("#turninfo").innerHTML = `${player.name} won the game`
 }
