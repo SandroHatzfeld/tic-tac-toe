@@ -71,11 +71,11 @@ const GameController = (function (player1, player2) {
 	const board = Gameboard()
 
 	let activePlayer = players[ 0 ]
+	let roundOver = false
 
 	// swap players
 	const switchActivePlayer = () => {
 		activePlayer = activePlayer === players[ 0 ] ? players[ 1 ] : players[ 0 ]
-		turnInfo(activePlayer)
 	}
 
 	const getActivePlayer = () => activePlayer
@@ -83,70 +83,105 @@ const GameController = (function (player1, player2) {
 	// play round and switch active player if move was available
 	const playRound = (row, column) => {
 		const move = board.addMarker(row, column, activePlayer.marker)
+
 		if (!move) {
 			return
 		}
+
 		const boardArray = board.getBoard()
 
 		// test every row if one is one marker
-		boardArray.map((row) => {
+		boardArray.forEach((row) => {
 			if (row.every(cell => cell.getValue() !== "" && cell.getValue() === row[ 0 ].getValue())) {
-				playerWon(activePlayer)
+				roundOver = true
+				return
 			}
 		})
 
 		// loop over each column to test if player has won
-		for (let col = 0; col < boardArray[ 0 ].length;col++) {
+		for (let col = 0;col < boardArray[ 0 ].length;col++) {
 			const column1 = boardArray[ 0 ][ col ].getValue()
 			const column2 = boardArray[ 1 ][ col ].getValue()
 			const column3 = boardArray[ 2 ][ col ].getValue()
-			
-			if (column1 === column2 && column1 === column3 ) {
+
+			if (column1 === column2 && column1 === column3) {
 				if (column1 === "" || column2 === "" || column3 === "") break
-				playerWon(activePlayer)
+				roundOver = true
+				return
 			}
 		}
 
 		// test if diagonals are same
-		if (boardArray[0][0].getValue() === boardArray[1][1].getValue() && boardArray[0][0].getValue() === boardArray[2][2].getValue() && boardArray[1][1].getValue() !== "") {
-			playerWon(activePlayer)
+		if (boardArray[ 1 ][ 1 ].getValue() === boardArray[ 0 ][ 0 ].getValue() && boardArray[ 1 ][ 1 ].getValue() === boardArray[ 2 ][ 2 ].getValue() && boardArray[ 1 ][ 1 ].getValue() !== "") {
+			roundOver = true
+			return
+		} else if (boardArray[ 1 ][ 1 ].getValue() === boardArray[ 0 ][ 2 ].getValue() && boardArray[ 1 ][ 1 ].getValue() === boardArray[ 2 ][ 0 ].getValue() && boardArray[ 1 ][ 1 ].getValue() !== "") {
+			roundOver = true
+			return
 		}
-		if (boardArray[0][2].getValue() === boardArray[1][1].getValue() && boardArray[0][2].getValue() === boardArray[0][2].getValue() && boardArray[1][1].getValue() !== "") {
-			playerWon(activePlayer)
-		}
+		
 
 		switchActivePlayer()
-		renderBoard(board)
 	}
-		
-	renderBoard(board)
-	turnInfo(activePlayer)
-	
+
+	const renderBoard = () => {
+		const gameTarget = document.querySelector("#game")
+		gameTarget.innerHTML = ""
+		board.getBoard().forEach((row, indexRow) => {
+			const rowVisual = document.createElement("div")
+			rowVisual.classList.add("row")
+
+			row.forEach((cell, indexColumn) => {
+				const cellVisual = document.createElement("div")
+				cellVisual.classList.add("cell")
+				if (cell.getValue() === "X") {
+					cellVisual.classList.add("cross")
+				} else if (cell.getValue() === "O") {
+					cellVisual.classList.add("circle")
+				}
+				cellVisual.dataset.row = indexRow
+				cellVisual.dataset.column = indexColumn
+				cellVisual.addEventListener("click", (event) => { setMarker(event) })
+				rowVisual.appendChild(cellVisual)
+			})
+			gameTarget.appendChild(rowVisual)
+		})
+	}
+
+	const getGameStatus = () => roundOver
+
 	return {
 		getActivePlayer,
-		playRound
+		getGameStatus,
+		playRound,
+		renderBoard
 	}
 })("Player 1", "Player 2")
 
-function renderBoard(board) {
-	const gameTarget = document.querySelector("#game")
-	
-	board.getBoard().map((row) => {
-		row.map((cell) => {
-			const cellVisual = document.createElement("div")
-			cellVisual.classList.add("cell")
-			cellVisual.innerHTML = cell.getValue()
-			gameTarget.appendChild(cellVisual)
-		})
-	})
+
+
+function setMarker(event) {
+	if (GameController.getGameStatus()) return
+	GameController.playRound(event.currentTarget.dataset.row, event.currentTarget.dataset.column)
+	GameController.renderBoard()
+	if (GameController.getGameStatus()) {
+		playerWon(GameController.getActivePlayer())
+	} else {
+		turnInfo(GameController.getActivePlayer())
+	}
 }
+
+GameController.renderBoard()
+turnInfo(GameController.getActivePlayer())
+
 function turnInfo(player) {
 	document.querySelector("#turninfo").innerHTML = `It's ${player.name} ( ${player.marker} ) turn`
+}
+function drawInfo() {
+	document.querySelector("#turninfo").innerHTML = `It's a tie!`
 }
 
 function playerWon(player) {
 	document.querySelector("#turninfo").innerHTML = `${player.name} won the game`
 }
-
-GameController
 

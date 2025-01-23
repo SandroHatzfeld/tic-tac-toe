@@ -1,5 +1,6 @@
 :root {
-	--border-type: solid black 1px;
+	--border-type: solid black 2px;
+	--box-size: 100px;
 }
 #wrapper {
 	display: grid;
@@ -13,18 +14,31 @@ h1, #turninfo {
 
 #game {
 	display: grid;
-	grid-template-columns: repeat(3, 100px);
-	grid-template-rows: repeat(3, 100px);
+	grid-template-columns: calc(var(--box-size) * 3);
+	grid-template-rows: repeat(3, var(--box-size));
 }
-
-.cell:nth-child(5) {
+.cell {
+	cursor: pointer;
+}
+.row {
+	display: grid;
+	grid-template-columns: repeat(3, var(--box-size));
+}
+.row:nth-child(2) .cell:nth-child(2) {
 	border: var(--border-type)
 }
-.cell:nth-child(2), .cell:nth-child(8) {
+.row:nth-child(1) .cell:nth-child(2),.row:nth-child(3) .cell:nth-child(2) {
 	border-left: var(--border-type);
 	border-right: var(--border-type);
 }
-.cell:nth-child(4), .cell:nth-child(6) {
+.row:nth-child(2) .cell:nth-child(1),.row:nth-child(2) .cell:nth-child(3) {
 	border-top: var(--border-type);
 	border-bottom: var(--border-type);
+}
+
+.circle {
+	background-image: url("images/circle.svg");
+}
+.cross {
+	background-image: url("images/cross.svg");
 }
