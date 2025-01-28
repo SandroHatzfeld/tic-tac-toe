@@ -70,6 +70,7 @@ const GameController = (function (player1, player2) {
 
 	const board = Gameboard()
 
+	let round = 1
 	let activePlayer = players[ 0 ]
 	let roundOver = false
 
@@ -94,6 +95,7 @@ const GameController = (function (player1, player2) {
 		boardArray.forEach((row) => {
 			if (row.every(cell => cell.getValue() !== "" && cell.getValue() === row[ 0 ].getValue())) {
 				roundOver = true
+				playerWon(activePlayer)
 				return
 			}
 		})
@@ -107,6 +109,7 @@ const GameController = (function (player1, player2) {
 			if (column1 === column2 && column1 === column3) {
 				if (column1 === "" || column2 === "" || column3 === "") break
 				roundOver = true
+				playerWon(activePlayer)
 				return
 			}
 		}
@@ -114,18 +117,25 @@ const GameController = (function (player1, player2) {
 		// test if diagonals are same
 		if (boardArray[ 1 ][ 1 ].getValue() === boardArray[ 0 ][ 0 ].getValue() && boardArray[ 1 ][ 1 ].getValue() === boardArray[ 2 ][ 2 ].getValue() && boardArray[ 1 ][ 1 ].getValue() !== "") {
 			roundOver = true
+			playerWon(activePlayer)
 			return
 		} else if (boardArray[ 1 ][ 1 ].getValue() === boardArray[ 0 ][ 2 ].getValue() && boardArray[ 1 ][ 1 ].getValue() === boardArray[ 2 ][ 0 ].getValue() && boardArray[ 1 ][ 1 ].getValue() !== "") {
 			roundOver = true
-			return
-		}
-		// REDO - NOT WORKING
-		if(!boardArray.map((row) => row.includes(""))) {
-			roundOver = true
-			drawInfo()
+			playerWon(activePlayer)
 			return
 		}
 
+		// test if round is a tie
+		if(round === 9 && !roundOver) {
+			roundOver = true
+			console.log("its a tie");
+			
+			tieInfo()
+			return
+		}
+		console.log(round);
+		
+		round++
 		switchActivePlayer()
 	}
 
@@ -170,11 +180,9 @@ function setMarker(event) {
 	GameController.playRound(event.currentTarget.dataset.row, event.currentTarget.dataset.column)
 	GameController.renderBoard()
 
-	if (GameController.getGameStatus()) {
-		playerWon(GameController.getActivePlayer())
-	} else {
+	if (GameController.getGameStatus() === false) {
 		turnInfo(GameController.getActivePlayer())
-	}
+	} 
 }
 
 GameController.renderBoard()
@@ -183,7 +191,7 @@ turnInfo(GameController.getActivePlayer())
 function turnInfo(player) {
 	document.querySelector("#turninfo").innerHTML = `It's ${player.name} ( ${player.marker} ) turn`
 }
-function drawInfo() {
+function tieInfo() {
 	document.querySelector("#turninfo").innerHTML = `It's a tie!`
 }
 function playerWon(player) {
