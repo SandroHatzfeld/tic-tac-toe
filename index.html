@@ -9,9 +9,22 @@
 <body>
 	<div id="wrapper">
 		<div id="container">
-			<h1>Tic-Tac-Toe</h1>
-			<div id="game"></div>
-			<h2 id="turninfo"></h2>
+			<aside>
+				<h2>Player 1 (X)</h2>
+				<label for="player1Name">Set your player name:</label>
+				<input id="player1Name" type="text">
+			</aside>
+			<main id="gameContainer">
+				<h1>Tic-Tac-Toe</h1>
+				<div id="game"></div>
+				<h2 id="turninfo"></h2>
+				<input id="restartBtn" class="hidden" type="button" value="Restart">
+			</main>
+			<aside>
+				<h2>Player 2 (O)</h2>
+				<label for="player2Name">Set your player name:</label>
+				<input id="player2Name" type="text">
+			</aside>
 		</div>
 	</div>
 	<script src="script.js"></script>

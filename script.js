@@ -68,7 +68,7 @@ const GameController = (function (player1, player2) {
 		}
 	]
 
-	const board = Gameboard()
+	let board = Gameboard()
 
 	let round = 1
 	let activePlayer = players[ 0 ]
@@ -80,6 +80,10 @@ const GameController = (function (player1, player2) {
 	}
 
 	const getActivePlayer = () => activePlayer
+
+	const setPlayerName = (index, name) => {
+		players[index].name = name
+	}
 
 	// play round and switch active player if move was available
 	const playRound = (row, column) => {
@@ -128,12 +132,9 @@ const GameController = (function (player1, player2) {
 		// test if round is a tie
 		if(round === 9 && !roundOver) {
 			roundOver = true
-			console.log("its a tie");
-			
 			tieInfo()
 			return
 		}
-		console.log(round);
 		
 		round++
 		switchActivePlayer()
@@ -165,11 +166,22 @@ const GameController = (function (player1, player2) {
 
 	const getGameStatus = () => roundOver
 
+	const restartGame = () => {
+		board = Gameboard()
+		roundOver = false
+		round = 1
+		activePlayer = players[ 0 ]
+		restartBtn.classList.add("hidden")
+		turnInfo(activePlayer)
+		renderBoard()
+	}
 	return {
 		getActivePlayer,
 		getGameStatus,
 		playRound,
-		renderBoard
+		renderBoard,
+		setPlayerName,
+		restartGame
 	}
 })("Player 1", "Player 2")
 
@@ -185,16 +197,40 @@ function setMarker(event) {
 	} 
 }
 
+// render Board and show turn info once
 GameController.renderBoard()
 turnInfo(GameController.getActivePlayer())
 
+// functions for showing turn/Win information
 function turnInfo(player) {
-	document.querySelector("#turninfo").innerHTML = `It's ${player.name} ( ${player.marker} ) turn`
+	document.querySelector("#turninfo").innerHTML = `It's ${player.name}'s ( ${player.marker} ) turn`
 }
 function tieInfo() {
 	document.querySelector("#turninfo").innerHTML = `It's a tie!`
+	toggleRestartBtn()
 }
 function playerWon(player) {
-	document.querySelector("#turninfo").innerHTML = `${player.name} won the game`
+	document.querySelector("#turninfo").innerHTML = `${player.name} won the game!`
+	toggleRestartBtn()
 }
 
+// inputlistener for playername-fields
+document.querySelector("#player1Name").addEventListener("input", (event) => {
+	GameController.setPlayerName(0, event.currentTarget.value)
+	turnInfo(GameController.getActivePlayer())
+})
+document.querySelector("#player2Name").addEventListener("input", (event) => {
+	GameController.setPlayerName(1, event.currentTarget.value)
+	turnInfo(GameController.getActivePlayer())
+})
+
+const restartBtn = document.querySelector("#restartBtn")
+
+// toggle class to hide/show button
+function toggleRestartBtn() {
+	restartBtn.classList.toggle("hidden")
+}
+
+restartBtn.addEventListener("click", () => {
+	GameController.restartGame()
+})

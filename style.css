@@ -1,6 +1,8 @@
 :root {
 	--border-type: solid black 2px;
 	--box-size: 100px;
+	font-family: Barlow, Arial, Helvetica, sans-serif;
+	font-size: 20px;
 }
 #wrapper {
 	display: grid;
@@ -11,7 +13,45 @@
 h1, #turninfo {
 	text-align: center;
 }
-
+#container {
+	display: flex;
+	gap: 50px;
+	align-items: center;
+	background-color: #efefef;
+	border-radius: 30px;
+	overflow: hidden;
+	box-shadow: 0px 5px 10px rgba(20, 20, 20, 0.6);
+}
+aside {
+	padding: 0 20px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 10px;
+	color: white;
+	background-color: #8f1111;
+}
+aside:nth-of-type(1) {
+	background-color: #1b3b8a;
+}
+aside h2 {
+	margin: 0;
+}
+input {
+	padding: 10px;
+}
+main {
+	display: grid;
+	justify-items: center;
+	min-width: calc(var(--box-size) * 3 + 100px);
+}
+#restartBtn {
+	margin-bottom: 20px;
+}
+.hidden {
+	opacity: 0;
+}
 #game {
 	display: grid;
 	grid-template-columns: calc(var(--box-size) * 3);
