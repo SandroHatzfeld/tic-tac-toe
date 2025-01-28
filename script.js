@@ -1,3 +1,6 @@
+const turnInfoEl = document.querySelector("#turninfo")
+const restartBtn = document.querySelector("#restartBtn")
+
 function Gameboard() {
 	// Setup for width and height of board
 	const rows = 3
@@ -203,14 +206,14 @@ turnInfo(GameController.getActivePlayer())
 
 // functions for showing turn/Win information
 function turnInfo(player) {
-	document.querySelector("#turninfo").innerHTML = `It's ${player.name}'s ( ${player.marker} ) turn`
+	turnInfoEl.innerHTML = `It's ${player.name}'s ( ${player.marker} ) turn`
 }
 function tieInfo() {
-	document.querySelector("#turninfo").innerHTML = `It's a tie!`
+	turnInfoEl.innerHTML = `It's a tie!`
 	toggleRestartBtn()
 }
 function playerWon(player) {
-	document.querySelector("#turninfo").innerHTML = `${player.name} won the game!`
+	turnInfoEl.innerHTML = `${player.name} won the game!`
 	toggleRestartBtn()
 }
 
@@ -224,9 +227,8 @@ document.querySelector("#player2Name").addEventListener("input", (event) => {
 	turnInfo(GameController.getActivePlayer())
 })
 
-const restartBtn = document.querySelector("#restartBtn")
 
-// toggle class to hide/show button
+// toggle class to hide/show restart button
 function toggleRestartBtn() {
 	restartBtn.classList.toggle("hidden")
 }

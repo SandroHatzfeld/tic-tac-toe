@@ -1,6 +1,8 @@
 :root {
 	--border-type: solid black 2px;
 	--box-size: 100px;
+	--colorPlayer1: #1b3b8a;
+	--colorPlayer2: #8f1111;
 	font-family: Barlow, Arial, Helvetica, sans-serif;
 	font-size: 20px;
 }
@@ -30,14 +32,15 @@ aside {
 	justify-content: center;
 	gap: 10px;
 	color: white;
-	background-color: #8f1111;
+	background-color: var(--colorPlayer1)
 }
 aside:nth-of-type(1) {
-	background-color: #1b3b8a;
+	background-color: var(--colorPlayer2)
 }
 aside h2 {
 	margin: 0;
 }
+
 input {
 	padding: 10px;
 }
