@@ -42,7 +42,7 @@ aside h2 {
 	margin: 0;
 }
 
-input {
+input:not(:nth-child(2)) {
 	padding: 10px;
 }
 main {
